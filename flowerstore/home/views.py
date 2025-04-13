@@ -8,4 +8,8 @@ def index(request):
         'template_data': template_data
     })
 def about(request):
-    return render(request, 'home/about.html')   
+    template_data = {} #to pass data from views to template
+    template_data['title'] = 'Flower Store'
+    return render(request, 'home/about.html', {
+        'template_data': template_data
+    })   
