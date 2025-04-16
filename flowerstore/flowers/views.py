@@ -19,3 +19,8 @@ flowers = [
 def index(request):
     template_data = {'title': 'Flowers', 'flowers': flowers}
     return render(request, 'flowers/index.html', {'template_data' : template_data})
+
+def detail(request, id):
+    flower = flowers[id - 1]
+    template_data = {'title': flower['name'], 'flower': flower}
+    return render(request, 'flowers/detail.html', {'template_data' : template_data})

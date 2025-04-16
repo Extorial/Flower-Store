@@ -16,7 +16,9 @@
                 <div class="p-2 card align-items-center pt-4" >
                     <img src="{% static 'img/about.jpg' %}" class="card-img-top rounded">
                     <div class="card-body text-center">
-                        {{ flower.name }}
+                        <a href="{% url 'flowers.detail' id=flower.id %}" class="btn bg-dark text-white">
+                            {{ flower.name }}
+                        </a>
                     </div>
                 </div>
             </div>
