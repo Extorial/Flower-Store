@@ -7,7 +7,12 @@ flowers = [
 ]
 
 def index(request):
-    template_data = {'title': 'Flowers', 'flowers': Flower.objects.all()}
+    search_term = request.GET.get('search')
+    if (search_term):
+        flowers = Flower.objects.filter(name__icontains=search_term)
+    else:
+        flowers = Flower.objects.all()
+    template_data = {'title': 'Flowers', 'flowers': flowers}
     return render(request, 'flowers/index.html', {'template_data' : template_data})
 
 def detail(request, id):
