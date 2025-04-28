@@ -1,8 +1,14 @@
 from django.shortcuts import render
-from django.contrib.auth import login as auth_login, authenticate
+from django.contrib.auth import login as auth_login, authenticate, logout as auth_logout
 from django.shortcuts import redirect
 from .forms import CustomUserCreationForm, CustomErrorList
+from django.contrib.auth.decorators import login_required
 # Create your views here.
+
+@login_required
+def logout(request):
+    auth_logout(request)
+    return redirect('home.index')
 
 def login(request):
     template_data = {}
@@ -28,7 +34,7 @@ def signup(request):
         form = CustomUserCreationForm(request.POST, error_class=CustomErrorList)
         if form.is_valid():
             form.save()
-            return redirect('home')
+            return redirect('accounts.login')
         else:
             template_data['form'] = form
             return render(request, 'accounts/signup.html', {'template_data': template_data})
