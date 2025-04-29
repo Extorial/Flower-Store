@@ -1,5 +1,6 @@
-from django.shortcuts import render
-from .models import Flower
+from django.shortcuts import render, redirect
+from .models import Flower, Review
+from django.contrib.auth.models import login_required
 
 # Create your views here.
 flowers = [
@@ -19,3 +20,16 @@ def detail(request, id):
     flower = Flower.objects.get(id=id)
     template_data = {'title': flower.name, 'flower': flower}
     return render(request, 'flowers/detail.html', {'template_data' : template_data})
+
+@login_required
+def create_review(request, id):
+    if request.method == 'POST' and request.POST['comment'] != '':
+        flower = Flower.objects.get(id=id)
+        review = Review()
+        review.comment = request.POST['comment']
+        review.flower = flower
+        review.user = request.user
+        review.save()
+        return redirect('flowers.detail', id=id)
+    else:
+        return redirect('flowers.detail', id=id)

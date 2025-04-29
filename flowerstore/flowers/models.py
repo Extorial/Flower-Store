@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
 class Flower(models.Model):
@@ -9,3 +10,13 @@ class Flower(models.Model):
     image = models.ImageField(upload_to='flower_images/')
     def __str__(self):
         return str(self.id) + ' - ' + self.name
+    
+
+class Review(models.Model):
+    id = models.AutoField(primary_key=True)
+    comment = models.CharField(max_length=255)
+    date = models.DateTimeField(auto_now_add=True)
+    flower = models.ForeignKey(Flower, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    def __str__(self):
+        return str(self.id) + ' - ' + self.flower.name
