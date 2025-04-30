@@ -2,6 +2,8 @@ from django.shortcuts import render
 from django.shortcuts import get_object_or_404, redirect
 from flowers.models import Flower
 from .utils import calculate_cart_total
+from .models import Order, Item
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 def index(request):
@@ -26,4 +28,26 @@ def clear(request):
     request.session['cart'] = {}
     return redirect('cart.index')
 
+@login_required
+def purchase(request):
+    cart = request.session.get('cart', {})
+    flower_ids = list(cart.keys())
+    if (flower_ids == []):
+        return redirect('cart.index')
+    flowers_in_cart = Flower.objects.filter(id__in==flower_ids)
+    cart_total = calculate_cart_total(cart, flowers_in_cart)
+    order = Order()
+    order.user = request.user
+    order.total = cart_total
+    order.save()
+    for flower in flowers_in_cart:
+        item = Item()
+        item.flower = flower
+        item.price = flower.price
+        item.order = order
+        item.quantity = cart[str(flower.id)] 
+        item.save()
+    request.session['cart'] = {}
+    template_data = {'title': 'Purchase confirmation', 'order_id': order.id}
+    return render(request, 'cart/purchase.html', {'template_data':template_data})
 
